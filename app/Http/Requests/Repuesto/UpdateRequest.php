@@ -25,7 +25,7 @@ class UpdateRequest extends FormRequest
     {
         return [
             'codigo' => 'required',
-            'descripcion' => 'required',
+            'descripcion' => ($this->clase == 'POM' ? 'required' : 'nullable'),
             'clase' => 'required',
             'posicion' => ($this->clase == 'PF' ? 'required' : 'nullable'),
             'medidas' => ($this->clase == 'C' || $this->clase == 'PEM' ? 'required' : 'nullable')

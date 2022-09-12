@@ -53,7 +53,7 @@
             item-key="id"
             class="elevation-1"
             :headers='(tipo_clase == "PF") ? headersPastillaFreno :
-             (tipo_clase == "C" || tipo_clase == "PEM") ? headersCaliper : headersPernoMordaza'
+             (tipo_clase == "C" || tipo_clase == "PEM") ? headersCaliper : (tipo_clase == "RPF") ? headersRegulacionPastillaFreno : headersPernoMordaza'
             :header-props="{ sortByText: 'Ordenar por' }"
             :items="ContenedorRepuestos"
             :options.sync="options"
@@ -130,7 +130,7 @@
                                 </v-col>
                             </v-row>
 
-                            <v-row>
+                            <v-row v-show="form.clase == 'POM'">
                                 <v-col sm="4" md="3" lg="3" xl="3" class="my-0 py-0 px-0">
                                     <v-subheader class="sub_header_form float-right mx-0 px-0">Descripción:</v-subheader>
                                 </v-col>
@@ -223,7 +223,6 @@ export default {
 
             headersPastillaFreno: [
                 {text: 'Código', value: 'codigo'},
-                {text: 'Descripción', value: 'descripcion'},
                 {text: 'Clase', value: 'clase', sortable: false},
                 {text: 'Posición', value: 'posicion'},
                 {text: 'Acciones', value: 'id', sortable: false},
@@ -231,7 +230,6 @@ export default {
 
             headersCaliper: [
                 {text: 'Código', value: 'codigo'},
-                {text: 'Descripción', value: 'descripcion'},
                 {text: 'Clase', value: 'clase', sortable: false},
                 {text: 'Medidas', value: 'medidas'},                
                 {text: 'Acciones', value: 'id', sortable: false}
@@ -240,6 +238,12 @@ export default {
             headersPernoMordaza: [
                 {text: 'Código', value: 'codigo'},
                 {text: 'Descripción', value: 'descripcion'},
+                {text: 'Clase', value: 'clase', sortable: false},
+                {text: 'Acciones', value: 'id', sortable: false},
+            ],
+
+            headersRegulacionPastillaFreno: [
+                {text: 'Código', value: 'codigo'},
                 {text: 'Clase', value: 'clase', sortable: false},
                 {text: 'Acciones', value: 'id', sortable: false},
             ],

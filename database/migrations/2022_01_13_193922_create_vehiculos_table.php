@@ -24,7 +24,7 @@ class CreateVehiculosTable extends Migration
             $table->foreign('casa_marca_id')->references('id')->on('marcas');
 
             $table->string('modelo');
-            $table->string('anio_vehiculo');
+            $table->string('anio_vehiculo')->nullable();
 
             $table->timestamps();
         });

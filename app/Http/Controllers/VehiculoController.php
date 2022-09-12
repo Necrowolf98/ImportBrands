@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Vehiculo\StoreRequest;
-use App\Http\Requests\Vehiculo\UpdateRequest;
 use App\Models\Marca;
 use App\Models\Vehiculo;
 use Illuminate\Http\Request;
+use App\Models\FrenoRepuesto;
 use App\Models\RepuestoFreno;
+use App\Http\Requests\Vehiculo\StoreRequest;
+use App\Http\Requests\Vehiculo\UpdateRequest;
 
 class VehiculoController extends Controller
 {
@@ -66,10 +67,13 @@ class VehiculoController extends Controller
         ])->orderBy('repuesto_frenos.id', 'desc')
         ->paginate($itemsPerPage);
 
+        $repuesto = FrenoRepuesto::join('repuesto_frenos', 'repuesto_frenos.id', '=', 'descripcion_repuestos.repuestofreno_id')
+        ->select('repuesto_frenos.id','repuesto_frenos.codigo', 'repuesto_frenos.descripcion', 'descripcion_repuestos.clase', 'descripcion_repuestos.posicion', 'descripcion_repuestos.medidas')->get();
+
         return [
             'vehiculo' => $vehiculo,
             'marca' => Marca::all(),
-            'repuesto' => RepuestoFreno::all()
+            'repuesto' => $repuesto
         ];
     }
     /**
@@ -92,7 +96,7 @@ class VehiculoController extends Controller
     {
         $vehiculo = new Vehiculo();
 
-        $vehiculo->repuestofreno_id = $request->repuestofreno_id;
+        $vehiculo->repuestofreno_id = $request->repuestofreno_id['id'];
         $vehiculo->casa_marca_id = $request->casa_marca_id;
         $vehiculo->modelo = $request->modelo;
         $vehiculo->anio_vehiculo = $request->anio_vehiculo;

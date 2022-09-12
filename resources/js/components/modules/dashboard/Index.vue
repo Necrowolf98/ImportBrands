@@ -53,7 +53,7 @@
             item-key="id"
             class="elevation-1"
             :headers='(tipo_clase == "PF") ? headersPastillaFreno :
-             (tipo_clase == "C" || tipo_clase == "PEM") ? headersCaliper : headersPernoMordaza'
+             (tipo_clase == "C" || tipo_clase == "PEM") ? headersCaliper : (tipo_clase == "RPF") ? headersRegulacionPastillaFreno : headersPernoMordaza'
             :header-props="{ sortByText: 'Ordenar por' }"
             :items="ContenedorRegistros"
             :options.sync="options"
@@ -114,8 +114,8 @@
                                 </v-col>
                                 <v-col sm="8" md="9" lg="9" xl="9" class="my-0 py-0">
                                     <v-select v-model="form.repuestofreno_id" label="Seleccione el tipo de repuesto" :items="ContenedorRepuestos"
-                                    :item-text="item =>`${item.codigo} - ${item.descripcion}`" item-value="id" clearable dense outlined append-icon="far fa-list-alt" class="input_form icons_formularios input_form_select my-0 py-0"
-                                    :error-messages="errors.repuestofreno_id" hint="Por ejemplo, d1475d" >
+                                    :item-text="item =>`${item.codigo} - ${(item.clase == 'PF' ? 'Pastilla de Freno' : (item.clase == 'C' ? 'Caliper' : (item.clase == 'POM' ? 'Perno de Mordaza' : (item.clase == 'RPF' ? 'Regulación de pastilla de freno' : 'Pistones de Mordaza'))))} ${(item.descripcion) ? ' - ' + item.descripcion : ''}`" item-value="id"  clearable dense outlined append-icon="far fa-list-alt" class="input_form icons_formularios input_form_select my-0 py-0"
+                                    :error-messages="errors.repuestofreno_id" hint="Por ejemplo, d1475d" @change="getPieza($event)">
                                     </v-select>
                                 </v-col>
                             </v-row>
@@ -142,7 +142,7 @@
                                 </v-col>
                             </v-row>
 
-                            <v-row>
+                            <v-row v-if="form.changevalue == 'PF'">
                                 <v-col sm="4" md="3" lg="3" xl="3" class="my-0 py-0 px-0">
                                     <v-subheader class="sub_header_form float-right mx-0 px-0">Año:</v-subheader>
                                 </v-col>
@@ -185,7 +185,8 @@ export default {
                 repuestofreno_id: '',
                 casa_marca_id: '',
                 modelo: '',
-                anio_vehiculo: ''
+                anio_vehiculo: null,
+                changevalue: null
             },
 
 
@@ -202,8 +203,6 @@ export default {
                 {text: 'Modelo', value: 'modelo'},
                 {text: 'Año', value: 'anio_vehiculo'},
                 {text: 'Código', value: 'codigo'},
-                {text: 'Descripción', value: 'descripcion'},
-                {text: 'Clase', value: 'clase'},
                 {text: 'Posición', value: 'posicion'},
                 {text: 'Acciones', value: 'id', sortable: false},
             ],
@@ -211,10 +210,7 @@ export default {
             headersCaliper: [
                 {text: 'Casa Marca', value: 'casa_marca'},
                 {text: 'Modelo', value: 'modelo'},
-                {text: 'Año', value: 'anio_vehiculo'},
                 {text: 'Código', value: 'codigo'},
-                {text: 'Descripción', value: 'descripcion'},
-                {text: 'Clase', value: 'clase'},
                 {text: 'Medidas', value: 'medidas'},                
                 {text: 'Acciones', value: 'id', sortable: false}
             ],
@@ -222,12 +218,18 @@ export default {
             headersPernoMordaza: [
                 {text: 'Casa Marca', value: 'casa_marca'},
                 {text: 'Modelo', value: 'modelo'},
-                {text: 'Año', value: 'anio_vehiculo'},
                 {text: 'Código', value: 'codigo'},
                 {text: 'Descripción', value: 'descripcion'},
-                {text: 'Clase', value: 'clase'},
                 {text: 'Acciones', value: 'id', sortable: false},
             ],
+
+            headersRegulacionPastillaFreno: [
+                {text: 'Casa Marca', value: 'casa_marca'},
+                {text: 'Modelo', value: 'modelo'},
+                {text: 'Código', value: 'codigo'},
+                {text: 'Acciones', value: 'id', sortable: false},
+            ],
+
 
             ContenedorRegistros: [],
             ContenedorMarcas: [],
@@ -253,6 +255,14 @@ export default {
     },
 
     methods: {
+        getPieza(item){
+            var retornoSelect = this.ContenedorRepuestos.filter(function(ContenedorRepuestos){
+                return ContenedorRepuestos.id === item;
+            });
+
+            this.form.changevalue = retornoSelect[0].clase;   
+        },
+
         getListarPiezas(){
             let me = this;
             me.loading = true
@@ -289,6 +299,7 @@ export default {
                 'casa_marca_id': me.form.casa_marca_id,
                 'modelo': me.form.modelo,
                 'anio_vehiculo': me.form.anio_vehiculo,
+                'changevalue': me.form.changevalue,
             }).then(() =>{
                 me.in_submit = false;
                 me.$notify({
@@ -318,6 +329,7 @@ export default {
             me.form.casa_marca_id = item.casa_marca_id;
             me.form.modelo = item.modelo;
             me.form.anio_vehiculo = item.anio_vehiculo;
+            me.form.changevalue = item.clase;
         },
 
         updateRegistro(){
@@ -328,6 +340,7 @@ export default {
                 'casa_marca_id': me.form.casa_marca_id,
                 'modelo': me.form.modelo,
                 'anio_vehiculo': me.form.anio_vehiculo,
+                'changevalue': me.form.changevalue,
             }).then(() => {
                 me.in_submit = false;
                 me.$notify({
@@ -412,6 +425,7 @@ export default {
             me.form.casa_marca_id = null;
             me.form.modelo = null;
             me.form.anio_vehiculo = null;
+            me.form.changevalue = null;
             me.errors = false;
             me.dialog = false;
         });

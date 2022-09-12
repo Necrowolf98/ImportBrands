@@ -27,7 +27,7 @@ class UpdateRequest extends FormRequest
             'repuestofreno_id' => 'required',
             'casa_marca_id' => 'required',
             'modelo' => 'required',
-            'anio_vehiculo' => 'required|numeric|digits:4'
+            'anio_vehiculo' => ($this->changevalue == 'PF' ? 'required|numeric|digits:4' : 'nullable'),
         ];
     }
 

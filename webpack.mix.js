@@ -15,4 +15,4 @@ const mix = require('laravel-mix');
 'resources/vendor/js/jquery.overlayScrollbars.min.js',
 ], 'public/js/plantilla.js')
 .copy('resources/vendor/fontawesome/webfonts', 'public/webfonts')
-.browserSync('http://importbrands.test/');
+.browserSync('http://importbrands.biz/');
